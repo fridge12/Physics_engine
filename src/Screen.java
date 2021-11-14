@@ -9,22 +9,37 @@ public class Screen extends Thread {
 
     static JFrame frame;
 
+    static BufferedImage image;
 
+    static final int frames =60;
+
+    static final long timeBetweenFrames = 1000/frames;
+
+    static final double timeBetweenFramesSeconds = 1/(double)(frames);
 
     public void run (){
         frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(500,500);
 
+        image = new BufferedImage(frame.getWidth(), frame.getHeight()-100, BufferedImage.TYPE_INT_RGB);
+
         frame.setVisible(true);
+        System.out.println("created frame");
 
-
+        long startTime ;
         while(true){
+            startTime= System.currentTimeMillis();
             //using content pane as default for now, will probably add layout and jpanel and use that
             frame.getContentPane().getGraphics().drawImage(draw(),0,0,null);
             try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
+                if(timeBetweenFrames-(System.currentTimeMillis()-startTime)<0){
+                    Thread.sleep(0);
+                }
+                else{
+                Thread.sleep(timeBetweenFrames-(System.currentTimeMillis()-startTime));
+            }
+            }catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
@@ -34,7 +49,8 @@ public class Screen extends Thread {
     }
     static int x = 10;
     public static Image draw(){
-        BufferedImage image = new BufferedImage(frame.getWidth(), frame.getHeight()-100, BufferedImage.TYPE_INT_RGB);
+       image.getGraphics().clearRect(0,0,image.getWidth(), image.getHeight());
+
 
         /*
         BufferedImage layer1 = image;
@@ -49,10 +65,14 @@ public class Screen extends Thread {
         image.getGraphics().drawImage(layer1,0,0,null);
         image.getGraphics().drawImage(layer2,0,0,null);
         */
-        image.getGraphics().drawRect(x , 250,  10,10);
-        x+= 1;
 
-        System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1000000);
+        for(Sprite s : Physics.spriteList){
+
+            image.getGraphics().drawOval((int)(s.position.x +(s.spriteMove().x*timeBetweenFramesSeconds)),(int)(s.position.y +(s.spriteMove().y*timeBetweenFramesSeconds)),(int)s.radius,(int)s.radius);
+            System.out.println((s.spriteMove().y*timeBetweenFramesSeconds)+" "+s.spriteVector.yDirection);
+        }
+
+        //System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1000000);
         return image;
     }
 
