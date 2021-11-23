@@ -20,7 +20,8 @@ public class Screen extends Thread {
     public void run (){
         frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500,500);
+        frame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
+
 
         image = new BufferedImage(frame.getWidth(), frame.getHeight()-100, BufferedImage.TYPE_INT_RGB);
 
@@ -68,7 +69,7 @@ public class Screen extends Thread {
 
         for(Sprite s : Physics.spriteList){
 
-            image.getGraphics().drawOval((int)(s.position.x +(s.spriteMove().x*timeBetweenFramesSeconds)),(int)(s.position.y +(s.spriteMove().y*timeBetweenFramesSeconds)),(int)s.radius,(int)s.radius);
+            image.getGraphics().drawOval((int)((s.position.x +(s.spriteMove().x*timeBetweenFramesSeconds))-s.radius),(int)((s.position.y +(s.spriteMove().y*timeBetweenFramesSeconds))-s.radius),(int)(s.radius*2),(int)(s.radius*2));
             System.out.println((s.spriteMove().y*timeBetweenFramesSeconds)+" "+s.spriteVector.yDirection);
         }
 

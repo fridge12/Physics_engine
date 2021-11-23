@@ -21,6 +21,9 @@ public class Physics extends Thread {
         long startTime;
         while (true) {
             startTime= System.currentTimeMillis();
+
+            Sprite.calculateCollisions();
+
             for (Sprite s : spriteList) {
 
                 s.calculateVector();
@@ -34,6 +37,10 @@ public class Physics extends Thread {
                 Thread.sleep(timeStep-(System.currentTimeMillis()-startTime));
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            }
+            catch(IllegalArgumentException e ){
+                e.printStackTrace();
+                System.out.println("in the try catch \n\n\n");
             }
         }
     }
