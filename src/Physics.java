@@ -2,7 +2,7 @@ import java.util.LinkedList;
 
 public class Physics extends Thread {
 
-    public static final Vector gravity = new Vector(0,10);
+    public static final Vector gravity = new Vector(0,.1);
 
     //list for all the sprites
     public static LinkedList<Sprite> spriteList = new LinkedList<Sprite>();
@@ -19,26 +19,33 @@ public class Physics extends Thread {
     @Override
     public void run() {
         long startTime;
+
+
         while (true) {
+            //time the loop started
             startTime= System.currentTimeMillis();
 
+            //calculating collisions
             Sprite.calculateCollisions();
 
+            //for loop for calculating the vector for each sprite
             for (Sprite s : spriteList) {
 
                 s.calculateVector();
-
                 s.position.floatingPointAdd(s.spriteMove());
-                System.out.println(s.position.y);
+                //System.out.println(s.position.y);
 
             }
 
+            //putting the thread to sleep
             try {
+                //putting it to sleep for the amount of time left
                 Thread.sleep(timeStep-(System.currentTimeMillis()-startTime));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             catch(IllegalArgumentException e ){
+
                 e.printStackTrace();
                 System.out.println("in the try catch \n\n\n");
             }
