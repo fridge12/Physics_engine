@@ -1,25 +1,25 @@
 public class ThreadController {
 
     public static void main (String args[]){
-//        method();
-//        method2();
-//        method3();
-//        method4();
-//        method5();
-          method6();
+        method();
+        method2();
+        method3();
+        method4();
+        method5();
+        method6();
+        method7();
+
+        UI ui = new UI();
+        ui.setName("UI thread");
+        ui.start();
 
 
-        Screen screen = new Screen();
-        screen.setName("Screen thread");
-        screen.start();
 
         memoryManager manager = new memoryManager();
         manager.setName("Memory Manager thread");
         manager.start();
 
-        Physics physics = new Physics();
-        physics.setName("Physics thread");
-        physics.start();
+
 
 
 
@@ -67,10 +67,14 @@ public class ThreadController {
     }
 
     public static void method6(){
-        Sprite sprite = new Sprite(true, new floatingPoint(1000,300),10,15,0);
-        Sprite sprite2 = new Sprite(true, new floatingPoint(400,300),10,15,0);
+        Sprite sprite = new Sprite(true, new floatingPoint(1000,300),20,15,1);
+        Sprite sprite2 = new Sprite(true, new floatingPoint(400,300),10,15,1);
         sprite2.newForce(10,0,300);
 
     }
 
+    public static void method7(){
+        Sprite sprite = new Sprite(true, new floatingPoint(0,0),20,15,.1);
+
+    }
 }

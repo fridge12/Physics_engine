@@ -133,13 +133,18 @@ public class Sprite {
                 if ((s.calculateDistance(s.position, s2.position) < (s.radius + s2.radius))) {
                         System.out.println(s.calculateDistance(s.position,s2.position)+" distance \n\n\n");
 
-                        //if the distance between their centers is greater than the distance between their vectors (after being divided by their mass) then a collision has happened
-                    if ((s.calculateDistance(s.position, s2.position) > s.calculateDistance(s.position.floatingPointAdd(s.position,s.spriteMove()), s2.position.floatingPointAdd(s2.position,s2.spriteMove())))){
+                        //if the distance between their centers is greater than the distance between their vectors (after being divided by the greatest vector direction) then a collision has happened
+                    double max = Math.max(Math.max(s.spriteVector.xDirection,s.spriteVector.yDirection),Math.max(s2.spriteVector.xDirection,s2.spriteVector.yDirection));
+                    if ((s.calculateDistance(s.position, s2.position) > s.calculateDistance(s.position.floatingPointAdd(s.position,s.spriteVector.vectorMultiply((1/max)).vectorEndPoint()), s2.position.floatingPointAdd(s2.position,s2.spriteVector.vectorMultiply((1/max)).vectorEndPoint())))){
                         //TODO: write comments
 
+                        //
                         double distanceBetweenSprites = s.calculateDistance(s.position, s2.position);
+                        //cos
                         double xMultiplyer = Math.abs(s2.position.x - s.position.x)/distanceBetweenSprites;
+                        //sin
                         double yMultiplyer = Math.abs(s2.position.y - s.position.y)/distanceBetweenSprites;
+
 
                         Vector v= new Vector(s.spriteVector.xDirection*xMultiplyer,s.spriteVector.yDirection*yMultiplyer,0);
                         Vector v2 = new Vector(s2.spriteVector.xDirection*xMultiplyer, s2.spriteVector.yDirection*yMultiplyer,0);
