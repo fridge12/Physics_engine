@@ -1,8 +1,10 @@
+import java.awt.*;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 
 public class Physics extends Thread {
 
-    public static final Vector gravity = new Vector(0,.1);
+    public static final Vector gravity = new Vector(0,.1,-1, "Gravity");
 
     //list for all the sprites
     public static LinkedList<Sprite> spriteList = new LinkedList<Sprite>();
@@ -54,8 +56,7 @@ public class Physics extends Thread {
                     e.printStackTrace();
                 } catch (IllegalArgumentException e) {
 
-                    e.printStackTrace();
-                    System.out.println("in the try catch \n\n\n");
+                    System.out.println("Took too long physics thread \n\n\n");
                 }
             }
             else{
@@ -77,14 +78,23 @@ public class Physics extends Thread {
 
     }
 
+    //to notify the physics thread so that it runs after it waits
     public void threadNotifyAll (){
         synchronized (this){
             System.out.println(Thread.currentThread().getName()+"   Thread name");
-
             notifyAll();
         }
     }
 
 
-
+    //returns sprite after being given a location
+    public static Sprite getSpriteOnClick(floatingPoint p) throws NoSuchElementException {
+        for(Sprite s: spriteList){
+            if(s.calculateDistance(s.position,p)<s.radius){
+                System.out.println(s.position+"   "+s.name);
+                return s;
+            }
+        }
+        throw new NoSuchElementException();
+    }
 }

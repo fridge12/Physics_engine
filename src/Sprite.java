@@ -1,4 +1,3 @@
-import java.awt.*;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -12,9 +11,6 @@ public class Sprite {
     //mass of sprite
     public double mass;
 
-    //probably won't use, but just incase
-    public double acceleration;
-
     //final vector for the sprite
     public Vector spriteVector = new Vector(0,0);
 
@@ -27,6 +23,11 @@ public class Sprite {
     //list of all forces acting on the sprite
     public LinkedList<Vector> forceList = new LinkedList<Vector>();
 
+    //String for name
+    String name="";
+
+    public boolean hasCollision;
+
     //constructor with gravity Multiplyer
     Sprite(boolean hasCollision, floatingPoint position, double mass, double radius,double gravityMultiplyer){
         this.position = position;
@@ -34,8 +35,10 @@ public class Sprite {
         this.radius= radius;
         this.gravityMultiplyer = gravityMultiplyer;
         Physics.spriteList.add(this);
+        name ="Sprite "+Physics.spriteList.size();
         //need to multiply the gravity multiplyer by mass because if it isn't then gravity affects each object differently depending on it's mass
         forceList.add(Physics.gravity.vectorMultiply(gravityMultiplyer*mass));
+        this.hasCollision = hasCollision;
         if(hasCollision){
             Physics.collisionList.add(this);
         }
@@ -46,10 +49,12 @@ public class Sprite {
         this.position = position;
         this.mass= mass;
         this.radius= radius;
-        gravityMultiplyer = 1;
+        gravityMultiplyer = 0;
         Physics.spriteList.add(this);
-        forceList.add(Physics.gravity.vectorMultiply(mass));
+        name ="Sprite "+Physics.spriteList.size();
+        forceList.add(Physics.gravity.vectorMultiply(mass*gravityMultiplyer));
         //if hasCollision is true then it is added to the collisionlist
+        this.hasCollision = hasCollision;
         if(hasCollision){
             Physics.collisionList.add(this);
         }
@@ -59,6 +64,28 @@ public class Sprite {
     public void calculateVector(){
         //this is the vector that will be added to sprite vector
     Vector sumVector = new Vector(0,0);
+        //need to use listIterator to avoid concurrentModificationException
+        ListIterator<Vector> it = forceList.listIterator();
+        //adding all the vectors
+        while (it.hasNext()) {
+            Vector v = it.next();
+        sumVector.addVector(v);
+        //only keeping a vector if it is still applying a force to the sprite
+        if(v.lifeTime<=Physics.timeStep&&v.lifeTime>=0){
+            it.remove();
+        }
+        else if(v.lifeTime>Physics.timeStep){
+            //this might cause problems
+            v.lifeTime-=Physics.timeStep;
+        }
+        }
+        spriteVector.addVector(sumVector);
+    }
+
+
+    public void calculateVectorWithoutTime(){
+        //this is the vector that will be added to sprite vector
+        Vector sumVector = new Vector(0,0);
 
         //need to use listIterator to avoid concurrentModificationException
         ListIterator<Vector> it = forceList.listIterator();
@@ -66,30 +93,14 @@ public class Sprite {
         //adding all the vectors
         while (it.hasNext()) {
             Vector v = it.next();
-        sumVector.addVector(v);
-
-        //only adding a vector if it is still applying a force to the sprite
-        if(v.lifeTime<=Physics.timeStep&&v.lifeTime>=0){
-            it.remove();
+            sumVector.addVector(v);
         }
-        else if(v.lifeTime>Physics.timeStep){
-            //this might cause problems
-
-            v.lifeTime-=Physics.timeStep;
-        }
-
-
-        }
-
-        //System.out.println("sprite vector "+ spriteVector.yDirection +" "+ spriteVector.xDirection);
         spriteVector.addVector(sumVector);
-        //System.out.println("sprite vector "+ spriteVector.yDirection +" "+ spriteVector.xDirection);
-
     }
 
     //returns amount the sprite has to move
     public floatingPoint spriteMove(){
-        return spriteVector.vectorMultiply((double)(1/mass)).vectorEndPoint();
+        return spriteVector.vectorMultiply((double)(1/mass)).getVectorEndPoint();
     }
 
     public void newForce(Vector v){
@@ -135,7 +146,7 @@ public class Sprite {
 
                         //if the distance between their centers is greater than the distance between their vectors (after being divided by the greatest vector direction) then a collision has happened
                     double max = Math.max(Math.max(s.spriteVector.xDirection,s.spriteVector.yDirection),Math.max(s2.spriteVector.xDirection,s2.spriteVector.yDirection));
-                    if ((s.calculateDistance(s.position, s2.position) > s.calculateDistance(s.position.floatingPointAdd(s.position,s.spriteVector.vectorMultiply((1/max)).vectorEndPoint()), s2.position.floatingPointAdd(s2.position,s2.spriteVector.vectorMultiply((1/max)).vectorEndPoint())))){
+                    if ((s.calculateDistance(s.position, s2.position) > s.calculateDistance(s.position.floatingPointAdd(s.position,s.spriteVector.vectorMultiply((1/max)).getVectorEndPoint()), s2.position.floatingPointAdd(s2.position,s2.spriteVector.vectorMultiply((1/max)).getVectorEndPoint())))){
                         //TODO: write comments
 
                         //

@@ -1,6 +1,8 @@
 public class Vector {
     //vector will always start at the center point of an object
 
+    public static int totalVectors;
+
     //velocity/magnitude of vector
     public double magnitude;
 
@@ -16,6 +18,8 @@ public class Vector {
 
     //name of the vector
     public String name;
+
+    public static final Vector nullVector = new Vector(0,0,0);
 
     //I created getter methods but I don't think I need them anymore
     /*
@@ -34,44 +38,26 @@ public class Vector {
     */
 
     //returns the end point of the vector relative to its starting point
-    public floatingPoint vectorEndPoint(){
+    public floatingPoint getVectorEndPoint(){
 
         return new floatingPoint(xDirection,yDirection);
     }
 
     //constructor with only x and y
     Vector (double x, double y){
-
-        xDirection = x;
-        yDirection = y;
-        magnitude = vectorMagnitude(x,y);
-        lifeTime = -1;
+        this(x,y,-1,"Vector "+totalVectors);
 
     }
 
     //constructor with x y and name
     Vector (double x, double y, String name){
-
-        xDirection = x;
-        yDirection = y;
-        magnitude = vectorMagnitude(x,y);
-        lifeTime = -1;
-
-        this.name = name;
+        this(x,y,-1,name);
     }
 
     //constructor with x y and time
     Vector (double x, double y, long time){
+        this(x,y,time,"Vector "+totalVectors);
 
-        xDirection = x;
-        yDirection = y;
-        magnitude = vectorMagnitude(x,y);
-        if(time<0) {
-            lifeTime = -1;
-        }
-        else{
-            lifeTime = time;
-        }
     }
 
     //constructor with x y time and name
@@ -79,7 +65,7 @@ public class Vector {
 
         xDirection = x;
         yDirection = y;
-        magnitude = vectorMagnitude(x,y);
+        magnitude = getVectorMagnitude(x,y);
         if(time<0) {
             lifeTime = -1;
         }
@@ -88,10 +74,11 @@ public class Vector {
         }
 
         this.name = name;
+        totalVectors++;
     }
 
     //returns the magnitude of the vector
-    public double vectorMagnitude(double x, double y){
+    public double getVectorMagnitude(double x, double y){
         return Math.sqrt(((x*x)+(y*y)));
     }
 
@@ -105,7 +92,7 @@ public class Vector {
     public void addVector (Vector a){
         this.yDirection += a.yDirection;
         this.xDirection += a.xDirection;
-        this.magnitude= this.vectorMagnitude(this.xDirection,this.yDirection);
+        this.magnitude= this.getVectorMagnitude(this.xDirection,this.yDirection);
     }
 
     //multiplies the vector with a given value

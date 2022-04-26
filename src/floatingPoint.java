@@ -1,3 +1,5 @@
+import java.awt.*;
+
 //this class is so that i can have poisitions with decimals
 public class floatingPoint {
 
@@ -23,4 +25,8 @@ public class floatingPoint {
         return new floatingPoint(a.x+b.x, a.y+b.y);
     }
 
+
+    public static floatingPoint convertPoint(Point p ){
+        return new floatingPoint(p.x,p.y);
+    }
 }
